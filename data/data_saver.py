@@ -1,10 +1,19 @@
 import pandas as pd
-import sqlite3
-
+from sqlalchemy import create_engine
+from sqlalchemy.exc import SQLAlchemyError
+from decouple import config
 
 class DataSaver:
-    def __init__(self, db_path):
-        self.__db_path = db_path
+    def __init__(self):
+        user = config('DB_USER')
+        password = config('DB_PASSWORD')
+        host = config('DB_HOST')
+        port = config('DB_PORT')
+        database = config('DB_NAME')    
+
+        url = f'mysql+pymysql://{user}:{password}@{host}:{port}/{database}'
+        self.engine = create_engine(url)
+
     
     def guardar_dataframe(self, df,nombre_tabla):
         if df is None:
@@ -16,10 +25,9 @@ class DataSaver:
             return
         
         try:
-            conn = sqlite3.connect(self.__db_path)
-            df.to_sql(nombre_tabla, conn, if_exists='replace', index=False)
-            conn.close()
+            df.to_sql(nombre_tabla, con=self.engine, if_exists='replace', index=False)
+            
             print(f'Datos cargados en tabla: {nombre_tabla}')
         
-        except Exception as e:
+        except SQLAlchemyError as e:
             print(f'Error guardando datos: {e}')

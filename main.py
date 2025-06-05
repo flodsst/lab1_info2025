@@ -3,6 +3,7 @@ from domain.dataset_csv import Datasetcsv
 from domain.dataset_excel import Datasetexcel
 from data.data_saver import DataSaver
 
+
 #Rutas de archivos --> Fuente
 
 csv_path = path.join(path.dirname(__file__), "files/star_wars_character_dataset.csv")
@@ -20,6 +21,6 @@ excel.cargar_datos()
 excel.transformar_datos(columnas_obligatorias=["id", "name", "model"])
 
 #Guardar en bbdd
-db = DataSaver("db/starwarsdata.db")
+db = DataSaver()
 db.guardar_dataframe(csv.datos, 'star_wars_character_dataset')
 db.guardar_dataframe(excel.datos, 'star_wars_vehicles_dataset')
